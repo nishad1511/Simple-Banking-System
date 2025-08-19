@@ -1,0 +1,109 @@
+package sampleapp1;
+
+import java.util.*;
+
+class Bank 
+{
+    String accountNo;
+    String password;
+    double balance;
+    Bank(String accountNo, String password, double balance) {
+        this.accountNo = accountNo;
+        this.password = password;
+        this.balance = balance;
+    }
+    boolean login(String acc, String pass) {
+        return accountNo.equals(acc) && password.equals(pass);
+    }
+    void deposit(double amount) {
+        balance += amount;
+        System.out.println("Deposited: " + amount + " | Balance: " + balance);
+    }
+    void withdraw(double amount) {
+        if (amount <= balance) {
+            balance -= amount;
+            System.out.println("Withdrawn: " + amount + " | Balance: " + balance);
+        } else {
+            System.out.println("Insufficient Balance!");
+        }
+    }
+    void transfer(double amount, Bank receiver) {
+        if (amount <= balance) {
+           
+            Random rand = new Random();
+            int otp = 1000 + rand.nextInt(9000);
+            System.out.println("Generated OTP: " + otp);
+
+            Scanner sc = new Scanner(System.in);
+            System.out.print("Enter OTP to confirm transfer: ");
+            int enteredOtp = sc.nextInt();
+
+            if (enteredOtp == otp) {
+                balance -= amount;
+                receiver.balance += amount;
+                System.out.println("Transferred " + amount + " to " + receiver.accountNo);
+            } else {
+                System.out.println("Invalid OTP! Transfer Failed.");
+            }
+        } else {
+            System.out.println("Insufficient Balance!");
+        }
+    }
+}
+public class BankingApp 
+{
+    public static void main(String[] args) 
+{
+        Scanner sc = new Scanner(System.in);
+
+        Bank user1 = new Bank("6360", "4713", 5000);
+        Bank user2 = new Bank("0636", "3174", 3000);
+        System.out.print("Enter Account No: ");
+        String acc = sc.nextLine();
+        System.out.print("Enter Password: ");
+        String pass = sc.nextLine();
+        Bank currentUser = null;
+        if (user1.login(acc, pass)) currentUser = user1;
+        else if (user2.login(acc, pass)) currentUser = user2;
+        if (currentUser == null) {
+            System.out.println("Invalid Login!");
+            return;
+        }
+        int choice;
+        do {
+            System.out.println("\n----- Menu -----");
+            System.out.println("1. Deposit");
+            System.out.println("2. Withdraw");
+            System.out.println("3. Transfer");
+            System.out.println("4. Check Balance");
+            System.out.println("5. Logout");
+            System.out.print("Enter choice: ");
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter amount: ");
+                    currentUser.deposit(sc.nextDouble());
+                    break;
+                case 2:
+                    System.out.print("Enter amount: ");
+                    currentUser.withdraw(sc.nextDouble());
+                    break;
+                case 3:
+                    System.out.print("Enter amount: ");
+                    double amt = sc.nextDouble();
+                    Bank receiver = (currentUser == user1) ? user2 : user1;
+                    currentUser.transfer(amt, receiver);
+                    break;
+                case 4:
+                    System.out.println("Your Balance: " + currentUser.balance);
+                    break;
+                case 5:
+                    System.out.println("Logged out!");
+                    break;
+                default:
+                    System.out.println("Invalid choice!");
+            }
+        } while (choice != 5);
+    }
+}
